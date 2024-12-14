@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           title: 'One1Menu',
           theme: ThemeData(),
-          home: Homepage(),
+          home:  LoginScreen(),
         );
       },
     );

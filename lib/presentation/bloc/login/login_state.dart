@@ -17,7 +17,9 @@ class   LogingLoadingErrorState  extends LoginState{
 
   
 }
+class LogingLoadingSuccessState extends LoginState{
 
-class LogingSucessState extends LoginState{}
+  final LoginuserModel loginuser;
 
-class LogingoogleButtonState extends LoginState{}
+  LogingLoadingSuccessState(this.loginuser);
+}

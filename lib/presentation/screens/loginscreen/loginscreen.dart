@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:one_menu/presentation/bloc/login/login_bloc.dart';
+import 'package:one_menu/presentation/screens/homepage/homepage.dart';
+import 'package:one_menu/presentation/widgets/custom_loadingbutton.dart';
 import 'package:one_menu/presentation/widgets/custom_textform_field.dart';
 import 'package:one_menu/presentation/widgets/custome_button.dart';
 import 'package:one_menu/presentation/widgets/custome_snackbar.dart';
@@ -49,15 +51,19 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         body: BlocListener<LoginBloc, LoginState>(
           listener: (context, state) {
-            // if (state is LogingSucessState) {
-            //   customSnackbar(context, 'Logged In Successfully', green);
-            //   Navigator.pushReplacement(context,
-            //       MaterialPageRoute(builder: (context) {
-            //     return const MainScreens(initialIndex: 0);
-            //   }));
-            // } else if (state is LoginErrorState) {
-            //   customSnackbar(context, state.error, red);
-            // }
+            if (state is LogingLoadingSuccessState) {
+              customSnackbar(context, 'Logged In Successfully', green);
+           WidgetsBinding.instance.addPostFrameCallback((_) {
+               Navigator.of(context).pushAndRemoveUntil(
+                 MaterialPageRoute(
+                   builder: (context) => const Homepage(),
+                 ),
+                (Route<dynamic> route) => false,
+               );
+             });
+            } else if (state is LogingLoadingErrorState) {
+              customSnackbar(context, 'user email :must@test.com && password : password ', red);
+            }
           },
           child: SafeArea(
             child: Form(
@@ -123,7 +129,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             if (value == null || value.isEmpty) {
                               return 'Please enter your password';
                             }
-                            if (value.length < 6) {
+                            if (value.length < 8) {
                               return 'Password must be at least 6 characters long';
                             }
                             return null;
@@ -147,19 +153,16 @@ class _LoginScreenState extends State<LoginScreen> {
                         BlocBuilder<LoginBloc, LoginState>(
                             builder: (context, state) {
                           if (state is LogingLoadingState) {
-                            return const CircularProgressIndicator();
+                            return  loadingButton(onPressed:() {}, color:green);
                           }
                           return CustomElevatedButton(
                             text: 'Log in',
                             onPressed: () async {
-                              // if (_formKey.currentState!.validate()) {
+                              if (_formKey.currentState!.validate()) {
 
-                            //    FocusScope.of(context).unfocus();
-                              //   context.read<LoginBloc>().add(LoginSubmittedEvent(
-                              //         _emailController.text,
-                              //         _passwordController.text,
-                              //       ));
-                              // }
+                               FocusScope.of(context).unfocus();
+                              context.read<LoginBloc>().add(onLoginButtonClickedEvent(email: _emailController.text, password: _passwordController.text));
+                              }
                             },
                             width: double.infinity,
                             height: 52,
